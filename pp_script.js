@@ -1,7 +1,6 @@
 const canvas = document.getElementById("pong");
 const ctx = canvas.getContext('2d');
 
-// Tải âm thanh
 let hit = new Audio();
 let wall = new Audio();
 let userScore = new Audio();
@@ -12,7 +11,7 @@ wall.src = "sounds/wall.mp3";
 comScore.src = "sounds/comScore.mp3";
 userScore.src = "sounds/userScore.mp3";
 
-// Khai báo đối tượng bóng: Ball
+
 const ball = {
     x: canvas.width / 2,
     y: canvas.height / 2,
@@ -23,27 +22,27 @@ const ball = {
     color: "WHITE"
 }
 
-// Khai báo đối tượng thanh ngang người chơi: User Paddle
+
 const user = {
-    x: 0, // left side of canvas
-    y: (canvas.height - 100) / 2, // -100 the height of paddle
+    x: 0,
+    y: (canvas.height - 100) / 2,
     width: 10,
     height: 100,
     score: 0,
     color: "WHITE"
 }
 
-// Khai báo đối tượng thanh ngang máy tính: COM Paddle
+
 const com = {
-    x: canvas.width - 10, // - width of paddle
-    y: (canvas.height - 100) / 2, // -100 the height of paddle
+    x: canvas.width - 10,
+    y: (canvas.height - 100) / 2,
     width: 10,
     height: 100,
     score: 0,
     color: "WHITE"
 }
 
-// Khai báo đối tượng lưới: NET
+
 const net = {
     x: (canvas.width - 2) / 2,
     y: 0,
@@ -51,17 +50,18 @@ const net = {
     width: 2,
     color: "WHITE"
 }
-let maxScore = 10;
+
+let maxScore = 2;
 let isGameOver = false;
 let isGameWin = false;
 
-// Vẽ hình chữ nhật, được sử dụng làm thanh ngang
+
 function drawRect(x, y, w, h, color) {
     ctx.fillStyle = color;
     ctx.fillRect(x, y, w, h);
 }
 
-// Vẽ hình tròn, được dùng để vẽ bóng
+
 function drawArc(x, y, r, color) {
     ctx.fillStyle = color;
     ctx.beginPath();
@@ -69,7 +69,6 @@ function drawArc(x, y, r, color) {
     ctx.closePath();
     ctx.fill();
 }
-
 // Sự kiện di chuột
 canvas.addEventListener("mousemove", getMousePos);
 
@@ -87,21 +86,19 @@ function resetBall() {
     ball.speed = 7;
 }
 
-// Vẽ lưới
 function drawNet() {
     for (let i = 0; i <= canvas.height; i += 15) {
         drawRect(net.x, net.y + i, net.width, net.height, net.color);
     }
 }
 
-// Vẽ phần điểm số
 function drawText(text, x, y) {
     ctx.fillStyle = "#FFF";
     ctx.font = "75px fantasy";
     ctx.fillText(text, x, y);
 }
 
-// Check va chạm
+// Kiểm tra va chạm
 function collision(b, p) {
     p.top = p.y;
     p.bottom = p.y + p.height;
@@ -116,7 +113,7 @@ function collision(b, p) {
     return p.left < b.right && p.top < b.bottom && p.right > b.left && p.bottom > b.top;
 }
 
-// Phương thức cập nhật, thực hiện tất cả các phép tính
+// Hàm cập nhật, thực hiện tất cả các phép tính
 
 function update() {
 
@@ -135,8 +132,8 @@ function update() {
     ball.x += ball.velocityX;
     ball.y += ball.velocityY;
 
-    // Máy tính tự chơi và chúng ta phải có thể đánh bại nó
-    // simple AI
+    // Máy tính tự chơi và chúng ta phải đánh bại nó
+    // AI đơn giản
     com.y += ((ball.y - (com.y + com.height / 2))) * 0.1;
 
     // Khi quả bóng va chạm vào phía trên hoặc phía dưới bức tường, ta phải nghịch chuyển vận tốc y
@@ -150,18 +147,9 @@ function update() {
 
     // Nếu bóng chạm vào một thanh dọc
     if (collision(ball, player)) {
-        // Phát ra âm thanh
         hit.play();
-        // Kiểm tra vị trí quả bóng chạm vào thanh dọc
         let collidePoint = (ball.y - (player.y + player.height / 2));
-        // Chuẩn hóa giá trị của điểm va chạm, chúng ta cần lấy các số từ -1 và 1
-        // -player.height/2 < điểm va chạm < player.height/2
         collidePoint = collidePoint / (player.height / 2);
-
-        // Khi quả bóng chạm vào phần đầu của thanh dọc, chúng ta muốn bóng lấy một góc -45 độ
-        // Khi quả bóng chạm vào phần giữa của của thanh dọc, chúng ta muốn bóng lấy một góc 0 độ
-        // Khi quả bóng chạm vào đáy của thanh dọc, chúng ta muốn bóng lấy 1 góc 45 độ
-        // Math.PI/4 = 45degrees
         let angleRad = (Math.PI / 4) * collidePoint;
 
         // Thay đổi hướng vận tốc X và Y
@@ -179,7 +167,7 @@ function endGame() {
         clearInterval(loop);
 }
 
-// Kiểm tra điều kiện kết thúc game
+
 function checkGameOver(){
     if(com.score === 2){
         isGameOver = true;
@@ -189,7 +177,7 @@ function checkGameOver(){
         isGameWin = true;
     }
 }
-// Hiển thị kết quả
+
 function handleGameOver() {
     if (isGameWin) {
         alert('YOU WIN');
@@ -204,22 +192,16 @@ function render() {
     // Xóa canvas
     drawRect(0, 0, canvas.width, canvas.height, "#000");
 
-    // Vẽ điểm số người chơi ở bên trái
     drawText(user.score, canvas.width / 4, canvas.height / 5);
 
-    // Vẽ điểm số máy tính ở bên phải
     drawText(com.score, 3 * canvas.width / 4, canvas.height / 5);
 
-    // Vẽ lưới
     drawNet();
 
-    // Vẽ thanh dọc của người chơi
     drawRect(user.x, user.y, user.width, user.height, user.color);
 
-    // Vẽ thanh dọc của máy tính
     drawRect(com.x, com.y, com.width, com.height, com.color);
 
-    // Vẽ bóng
     drawArc(ball.x, ball.y, ball.radius, ball.color);
 }
 
