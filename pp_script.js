@@ -169,10 +169,10 @@ function endGame() {
 
 
 function checkGameOver(){
-    if(com.score === 2){
+    if(com.score === maxScore){
         isGameOver = true;
         isGameWin = false;
-    }else if(user.score === 2){
+    }else if(user.score === maxScore){
         isGameOver = true;
         isGameWin = true;
     }
