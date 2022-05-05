@@ -51,7 +51,7 @@ const net = {
     color: "WHITE"
 }
 
-let maxScore = 2;
+let maxScore = 10;
 let isGameOver = false;
 let isGameWin = false;
 
@@ -69,7 +69,7 @@ function drawArc(x, y, r, color) {
     ctx.closePath();
     ctx.fill();
 }
-// Sự kiện di chuột
+
 canvas.addEventListener("mousemove", getMousePos);
 
 function getMousePos(evt) {
@@ -78,7 +78,7 @@ function getMousePos(evt) {
     user.y = evt.clientY - rect.top - user.height / 2;
 }
 
-// Khi máy tính hoặc người chơi ghi điểm, chúng ta reset lại bóng
+
 function resetBall() {
     ball.x = canvas.width / 2;
     ball.y = canvas.height / 2;
@@ -98,7 +98,6 @@ function drawText(text, x, y) {
     ctx.fillText(text, x, y);
 }
 
-// Kiểm tra va chạm
 function collision(b, p) {
     p.top = p.y;
     p.bottom = p.y + p.height;
@@ -113,11 +112,9 @@ function collision(b, p) {
     return p.left < b.right && p.top < b.bottom && p.right > b.left && p.bottom > b.top;
 }
 
-// Hàm cập nhật, thực hiện tất cả các phép tính
 
 function update() {
 
-    // Cập nhật điểm số của người chơi, nếu bóng đi về phía bên trái "ball.x < 0" máy tính thắng, hoặc "ball.x > canvas.width" người chơi thắng
     if (ball.x - ball.radius < 0) {
         com.score++;
         comScore.play();
@@ -128,40 +125,36 @@ function update() {
         resetBall();
     }
 
-    // Vận tốc của bóng
+
     ball.x += ball.velocityX;
     ball.y += ball.velocityY;
 
-    // Máy tính tự chơi và chúng ta phải đánh bại nó
-    // AI đơn giản
     com.y += ((ball.y - (com.y + com.height / 2))) * 0.1;
 
-    // Khi quả bóng va chạm vào phía trên hoặc phía dưới bức tường, ta phải nghịch chuyển vận tốc y
     if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
         ball.velocityY = -ball.velocityY;
         wall.play();
     }
 
-    // Kiểm tra xem bóng đập vào thanh dọc của người chơi hay của máy tính
+
     let player = (ball.x + ball.radius < canvas.width / 2) ? user : com;
 
-    // Nếu bóng chạm vào một thanh dọc
+
     if (collision(ball, player)) {
         hit.play();
         let collidePoint = (ball.y - (player.y + player.height / 2));
         collidePoint = collidePoint / (player.height / 2);
         let angleRad = (Math.PI / 4) * collidePoint;
 
-        // Thay đổi hướng vận tốc X và Y
         let direction = (ball.x + ball.radius < canvas.width / 2) ? 1 : -1;
         ball.velocityX = direction * ball.speed * Math.cos(angleRad);
         ball.velocityY = ball.speed * Math.sin(angleRad);
 
-        // Tăng tốc bóng mỗi khi thanh dọc chạm vào nó
+
         ball.speed += 0.5;
     }
 }
-// Kiểm tra điều kiện để dừng vòng lặp game
+
 function endGame() {
     if (isGameOver === true)
         clearInterval(loop);
@@ -186,7 +179,6 @@ function handleGameOver() {
     }
 }
 
-// Thực hiện các hàm vẽ
 function render() {
 
     // Xóa canvas
@@ -217,8 +209,6 @@ function game() {
 
 }
 
-// Số khung hình mỗi giây
 let framePerSecond = 50;
 
-//Gọi hàm trò chơi 50 lần mỗi giây
 let loop = setInterval(game, 1000 / framePerSecond);
